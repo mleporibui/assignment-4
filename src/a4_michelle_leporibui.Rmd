@@ -1,0 +1,177 @@
+---
+title: "Assignment 4"
+author: "Michelle Lepori-Bui"
+date: "11/17/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(tidyverse)
+library(lubridate)
+library(kableExtra)
+library(effsize)
+library(broom)
+library(ggbeeswarm)
+
+hares <-read_csv(here("data","Bonanza Creek snowshoe hare data.csv"))
+```
+
+# Title
+
+## Introduction
+
+4 -5 sentences about what the study is exploring including basic background info suject site and study with citations
+brief overview of waht is included in the repot
+
+## Data and analyses
+
+3-4 sentences friefly describe the data including citation and credit 
+provide and overview of the main analysis, stat methods, and tools
+
+##exploratory findings
+
+1. annual juvenile hare trap counts
+count the total number of juvenile hare trappings (age == "j") during each year of the study include all grid sites
+creat a finalized data visualization of the counts by eyar with figure caption
+```{r}
+juveniles <- hares %>% 
+  filter(age == "j") %>% 
+  mutate(date = mdy(date)) %>% 
+  mutate(year = year(date)) 
+juvenile_counts <- juveniles %>% 
+  count(year)
+
+ggplot(data = juvenile_counts, aes(x = year, y = n)) +
+  geom_point()
+```
+
+3-4 sentences below figure describe major takeawyas from graph about total snowshoe hare trappings at the site
+
+consider:
+min/max counts, mean/median annual number of hares trapped
+general/ notable trends
+fig represetns absolute counts. effort (# of dats and number of traps each year) could impact
+what should you do and how could you standardie the j hare population
+
+use:
+lubridate()
+count()
+
+
+2. Visualize juvenile hare weights
+
+```{r}
+ggplot(data = juveniles, aes(x = sex, y = weight)) +
+  geom_beeswarm(aes(color = sex)) +
+  facet_wrap(~grid) +
+  
+  
+  geom_point(data = penguin_f_summary, 
+             aes(x = species, y = mean_flipper_length),
+             size = 4) +
+  geom_errorbar(data = penguin_f_summary,
+               aes(x= species,
+                   ymax = mean_flipper_length + sd_flipper_length,
+                   ymin = mean_flipper_length - sd_flipper_length,),
+               width = 0.1)
+```
+
+
+
+
+3. Juvenile weight comparison 
+
+**Table 1.** Caption: 
+
+```{r}
+juveniles_summary <- juveniles %>% 
+  filter(!is.na(weight)) %>% 
+  group_by(sex) %>% 
+  summarize(mean_weight = mean(weight),
+            sd_weight = sd(weight),
+            sample_size = n())
+juveniles_table <- juveniles_summary %>% 
+  kable(col.names = c("Sex", "Mean weight (g)", "Standard deviation (g)", "Sample size")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+juveniles_table
+```
+
+```{r, include=FALSE}
+juveniles_mf <- juveniles %>% 
+  filter(!is.na(sex))
+
+# Histograms
+ggplot(data = juveniles_mf, aes(x = weight)) +
+  geom_histogram(bins = 12) +
+  facet_wrap(~sex)
+
+# QQ Plots
+ggplot(data= juveniles_mf, aes(sample = weight)) +
+  geom_qq() +
+  facet_wrap(~sex)
+```
+
+
+```{r}
+juveniles_f <- juveniles %>% 
+  filter(!is.na(weight)) %>%
+  filter(sex == "f") %>% 
+  pull(weight)
+
+juveniles_m <- juveniles %>% 
+  filter(!is.na(weight)) %>%
+  filter(sex == "m") %>% 
+  pull(weight)
+
+cohen.d(juveniles_f, juveniles_m)
+
+juveniles_ttest <- t.test(juveniles_f, juveniles_m)
+juveniles_ttest
+
+```
+
+
+2-3 sentence comperhensice statement of the means comparison includeing 
+-actual differnce in means
+- effect size (cohesn d)
+- outcome of2 sample ttest
+
+
+
+
+4. Relationship between juvenile weight and hind foot length
+
+hindft mm vs weight g
+ALL juvenile hares
+ figure of foot length vs weight
+ caption
+ 
+linear regressio
+check model diagnostics
+
+describe the outcome
+slope interpretation
+r2 value
+pearsons r correlation
+
+are the assumptions of linear regression a concern?
+additonal thoughts about how well or not the model fits
+what worries you?
+
+
+
+
+### Summary
+
+
+### Citations
+
+
+## END NO CODE OR WARNINGS!
+
+
+
+
+
