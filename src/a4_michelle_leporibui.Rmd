@@ -1,12 +1,11 @@
 ---
-title: "Assignment 4"
+title: "Juvenile snowshoe hares at Bonanza Creek Experimental Forest: An exploratory report"
 author: "Michelle Lepori-Bui"
-date: "11/17/2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(here)
 library(tidyverse)
 library(lubridate)
@@ -15,24 +14,22 @@ library(effsize)
 library(broom)
 library(ggbeeswarm)
 
-hares <-read_csv(here("data","Bonanza Creek snowshoe hare data.csv"))
+hares <-read_csv(here("data","bonanza_hares.csv"))
 ```
 
-# Title
-
-## Introduction
+### Introduction
 
 4 -5 sentences about what the study is exploring including basic background info suject site and study with citations
 brief overview of waht is included in the repot
 
-## Data and analyses
+### Data and analyses
 
 3-4 sentences friefly describe the data including citation and credit 
 provide and overview of the main analysis, stat methods, and tools
 
-##exploratory findings
+### Exploratory findings
 
-1. annual juvenile hare trap counts
+1. Annual juvenile hare trap counts
 count the total number of juvenile hare trappings (age == "j") during each year of the study include all grid sites
 creat a finalized data visualization of the counts by eyar with figure caption
 ```{r}
@@ -55,27 +52,23 @@ general/ notable trends
 fig represetns absolute counts. effort (# of dats and number of traps each year) could impact
 what should you do and how could you standardie the j hare population
 
-use:
-lubridate()
-count()
-
 
 2. Visualize juvenile hare weights
 
 ```{r}
 ggplot(data = juveniles, aes(x = sex, y = weight)) +
   geom_beeswarm(aes(color = sex)) +
-  facet_wrap(~grid) +
+  facet_wrap(~grid) 
   
   
-  geom_point(data = penguin_f_summary, 
-             aes(x = species, y = mean_flipper_length),
-             size = 4) +
-  geom_errorbar(data = penguin_f_summary,
-               aes(x= species,
-                   ymax = mean_flipper_length + sd_flipper_length,
-                   ymin = mean_flipper_length - sd_flipper_length,),
-               width = 0.1)
+  #geom_point(data = penguin_f_summary, 
+             #aes(x = species, y = mean_flipper_length),
+             #size = 4) +
+  #geom_errorbar(data = penguin_f_summary,
+               #aes(x= species,
+                  # ymax = mean_flipper_length + sd_flipper_length,
+                   #ymin = mean_flipper_length - sd_flipper_length,),
+               #width = 0.1)
 ```
 
 
@@ -169,7 +162,7 @@ what worries you?
 ### Citations
 
 
-## END NO CODE OR WARNINGS!
+## END
 
 
 
