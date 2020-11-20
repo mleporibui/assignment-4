@@ -30,22 +30,28 @@ provide and overview of the main analysis, stat methods, and tools
 ### Exploratory findings
 
 1. Annual juvenile hare trap counts
-count the total number of juvenile hare trappings (age == "j") during each year of the study include all grid sites
-creat a finalized data visualization of the counts by eyar with figure caption
+In this section we count the total number of juvenile hare trappings during each year of the study in all grid sites. 
 ```{r}
+# filter hares data by age class "j" and use lubridate package to add a year column
 juveniles <- hares %>% 
   filter(age == "j") %>% 
   mutate(date = mdy(date)) %>% 
   mutate(year = year(date)) 
+# make a separate data frame of counts
 juvenile_counts <- juveniles %>% 
   count(year)
-
+# plot counts by year
 ggplot(data = juvenile_counts, aes(x = year, y = n)) +
-  geom_point()
+  geom_col(fill = "paleturquoise3") +
+  labs(x = "Year",
+       y = "Total juvenile hare trappings") +
+  scale_x_discrete(limits=c(1999:2012)) +
+  theme_bw()
 ```
+**Figure 1.** Total juvenile hare trappings per year at Bonanza Creek Experimental Forest from 1999 to 2012. 
+
 
 3-4 sentences below figure describe major takeawyas from graph about total snowshoe hare trappings at the site
-
 consider:
 min/max counts, mean/median annual number of hares trapped
 general/ notable trends
@@ -56,35 +62,27 @@ what should you do and how could you standardie the j hare population
 2. Visualize juvenile hare weights
 
 ```{r}
+site_names <- c(bonbs = "Black Spruce Stand",bonmat = "Mature Stand",bonrip = "Riparian Stand")
 ggplot(data = juveniles, aes(x = sex, y = weight)) +
   geom_beeswarm(aes(color = sex)) +
-  facet_wrap(~grid) 
-  
-  
-  #geom_point(data = penguin_f_summary, 
-             #aes(x = species, y = mean_flipper_length),
-             #size = 4) +
-  #geom_errorbar(data = penguin_f_summary,
-               #aes(x= species,
-                  # ymax = mean_flipper_length + sd_flipper_length,
-                   #ymin = mean_flipper_length - sd_flipper_length,),
-               #width = 0.1)
+  facet_wrap(~grid,labeller = labeller(grid = site_names)) +
+  geom_boxplot(fill = NA, width = .5)
 ```
-
-
+**Figure 2.** Juvenile snowshoe hare weights by sex (female, male, and not available) and site (Black Spruce Stand, Mature Stand, and Riparian Stand) at Bonanza Creek Experimental Forest.
+2-3 sentences with main takeawyas
 
 
 3. Juvenile weight comparison 
 
-**Table 1.** Caption: 
-
+**Table 1.** Summary statistics (mean, standard deviation, and sample size) of juvenile snowshoe hare weights by sex. 
 ```{r}
 juveniles_summary <- juveniles %>% 
   filter(!is.na(weight)) %>% 
+  filter(!is.na(sex)) %>% 
   group_by(sex) %>% 
   summarize(mean_weight = mean(weight),
             sd_weight = sd(weight),
-            sample_size = n())
+            sample_size = n()) 
 juveniles_table <- juveniles_summary %>% 
   kable(col.names = c("Sex", "Mean weight (g)", "Standard deviation (g)", "Sample size")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
@@ -105,7 +103,6 @@ ggplot(data= juveniles_mf, aes(sample = weight)) +
   geom_qq() +
   facet_wrap(~sex)
 ```
-
 
 ```{r}
 juveniles_f <- juveniles %>% 
@@ -131,10 +128,12 @@ juveniles_ttest
 - effect size (cohesn d)
 - outcome of2 sample ttest
 
-
-
-
 4. Relationship between juvenile weight and hind foot length
+
+```{r}
+
+```
+
 
 hindft mm vs weight g
 ALL juvenile hares
